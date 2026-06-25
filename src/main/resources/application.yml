@@ -7,6 +7,9 @@ spring:
   jdbc:
     template:
       query-timeout: 5s
+  sql:
+    init:
+      mode: always
 
 server:
   port: 8080
