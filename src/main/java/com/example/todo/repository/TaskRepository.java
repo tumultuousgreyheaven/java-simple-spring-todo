@@ -1,10 +1,13 @@
 package com.example.todo.repository;
 
-import com.example.todo.model.Task;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import java.util.List;
+
+import com.example.todo.model.Task;
 
 @Repository
 public class TaskRepository {
@@ -26,6 +29,12 @@ public class TaskRepository {
 
     public List<Task> findAll() {
         return jdbc.query("SELECT * FROM tasks", rowMapper);
+    }
+
+    public Optional<Task> findById(Long id) {
+        List<Task> tasks = jdbc.query(
+                "SELECT * FROM tasks WHERE id = ?", rowMapper, id);
+        return tasks.isEmpty() ? Optional.empty() : Optional.of(tasks.get(0));
     }
 
     // other CRUD methods
