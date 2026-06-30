@@ -1,5 +1,6 @@
 package com.example.todo.service;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -24,5 +25,18 @@ public class TaskService {
         return
             repo.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(id));
+    }
+
+    public Task createTask(String title, String description) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+        Task task = new Task();
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setStatus("TODO");
+        task.setCreatedAt(Instant.now());
+
+        return repo.save(task);
     }
 }

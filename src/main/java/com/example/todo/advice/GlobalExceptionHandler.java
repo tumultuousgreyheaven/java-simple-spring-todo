@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,6 +22,17 @@ public class GlobalExceptionHandler {
         body.put("timestamp", Instant.now());
         body.put("status", 404);
         body.put("error", "Not Found");
+        body.put("message", ex.getMessage());
+        return body;
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, Object> handleDataAccess(DataAccessException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", Instant.now());
+        body.put("status", 500);
+        body.put("error", "Data Access Error");
         body.put("message", ex.getMessage());
         return body;
     }
