@@ -2,11 +2,15 @@ package com.example.todo.model;
 
 import java.time.Instant;
 
+import com.example.todo.dto.UpdateFullTaskRequest;
+
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class Task {
+    @Min(1L)
     private Long id;
 
     @NotBlank(message = "Title is required")
@@ -23,6 +27,16 @@ public class Task {
 
     // constructors, getters, setters
 
+    public Task() {}
+
+    public Task(Long id, UpdateFullTaskRequest dto) {
+        this.id = id;
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+        this.status = dto.getStatus();
+        this.createdAt = null;
+    }
+    
     public Long getId() {
         return this.id;
     }

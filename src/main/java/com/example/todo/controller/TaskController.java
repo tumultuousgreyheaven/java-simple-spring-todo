@@ -6,12 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.todo.dto.CreateTaskRequest;
+import com.example.todo.dto.UpdateFullTaskRequest;
 import com.example.todo.model.Task;
 import com.example.todo.service.TaskService;
 
@@ -40,5 +42,18 @@ public class TaskController {
     @ResponseStatus(HttpStatus.CREATED)
     public Task create(@Valid @RequestBody CreateTaskRequest request) {
         return service.createTask(request.getTitle(), request.getDescription());
+    }
+
+    /*
+    *   As I have id path variable
+    *   I am not able to create new resource
+    *   with a PUT-request. Service returns
+    *   404 Not Found for inexistent ids.
+    */
+    @PutMapping("/{id}")
+    public Task updateFull(
+        @PathVariable Long id, @Valid @RequestBody UpdateFullTaskRequest dto
+    ) {
+        return service.updateTaskFull(id, dto);
     }
 }

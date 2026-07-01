@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.todo.dto.UpdateFullTaskRequest;
 import com.example.todo.exception.TaskNotFoundException;
 import com.example.todo.model.Task;
 import com.example.todo.repository.TaskRepository;
@@ -22,9 +23,9 @@ public class TaskService {
     }
 
     public Task getTaskById(Long id) {
-        return
-            repo.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException(id));
+        return repo
+            .findById(id)
+            .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     public Task createTask(String title, String description) {
@@ -39,4 +40,28 @@ public class TaskService {
 
         return repo.save(task);
     }
+
+    public Task updateTaskFull(Long id, UpdateFullTaskRequest dto) {
+        return repo
+            .updateFull(id, dto)
+            .orElseThrow(() -> new TaskNotFoundException(id));
+    }
+
+    /*
+    public ResponseEntity<Task> updateOrCreate(
+        Long id, UpdateFullTaskRequest dto
+    ) {
+        if (repo.findById(id).equals(Optional.empty())) {
+            return new ResponseEntity<>(
+                createTask(dto.getTitle(), dto.getDescription()),
+                HttpStatus.CREATED
+            );
+        } else {
+            return new ResponseEntity<>(
+                updateTaskFull(id, dto),
+                HttpStatus.OK
+            );
+        }
+    }
+    */
 }

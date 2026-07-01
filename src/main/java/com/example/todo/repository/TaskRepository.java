@@ -10,7 +10,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.todo.dto.UpdateFullTaskRequest;
 import com.example.todo.model.Task;
 
 @Repository
@@ -41,6 +43,7 @@ public class TaskRepository {
         return tasks.isEmpty() ? Optional.empty() : Optional.of(tasks.get(0));
     }
 
+    @Transactional
     public Task save(Task task) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(connection -> {
@@ -57,6 +60,52 @@ public class TaskRepository {
         task.setId(keyHolder.getKey().longValue());
         return task;
     }
+
+    @Transactional
+    public Optional<Task> updateFull(Long id, UpdateFullTaskRequest dto) {
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                "UPDATE tasks SET title = ?, description = ?, status = ? WHERE id = ?",
+                new String[]{"id"}
+            );
+            ps.setString(1, dto.getTitle());
+            ps.setString(2, dto.getDescription());
+            ps.setString(3, dto.getStatus());
+            ps.setLong(4, id);
+            return ps;
+        });
+        return findById(id);
+    }
+
+    @Transactional
+    public Optional<Task> updateTitle(Long id, String title) {
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                "UPDATE tasks SET title = ? WHERE id = ?",
+                new String[]{"id"}
+            );
+            ps.setString(1, title);
+            ps.setLong(2, id);
+            return ps;
+        });
+        return findById(id);
+    }
+
+    @Transactional
+    public Optional<Task> updateDescription(Long id, String description) {
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                "UPDATE tasks SET description = ? WHERE id = ?",
+                new String[]{"id"}
+            );
+            ps.setString(1, description);
+            ps.setLong(2, id);
+            return ps;
+        });
+        return findById(id);
+    }
+
+    // can replace with updateText(Long id, String text, String fieldName)
 
     // other CRUD methods
 }
