@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +14,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.todo.dto.CreateTaskRequest;
+import com.example.todo.dto.UpdateDescriptionTaskRequest;
 import com.example.todo.dto.UpdateFullTaskRequest;
+import com.example.todo.dto.UpdateStatusTaskRequest;
+import com.example.todo.dto.UpdateTitleTaskRequest;
 import com.example.todo.model.Task;
 import com.example.todo.service.TaskService;
 
@@ -55,5 +59,26 @@ public class TaskController {
         @PathVariable Long id, @Valid @RequestBody UpdateFullTaskRequest dto
     ) {
         return service.updateTaskFull(id, dto);
+    }
+
+    @PatchMapping("/{id}/title")
+    public Task updateTitle(
+        @PathVariable Long id, @Valid @RequestBody UpdateTitleTaskRequest dto
+    ) {
+        return service.updateTaskTextField(id, dto.getTitle(), "title");
+    }
+
+    @PatchMapping("/{id}/description")
+    public Task updateDescription(
+        @PathVariable Long id, @Valid @RequestBody UpdateDescriptionTaskRequest dto
+    ) {
+        return service.updateTaskTextField(id, dto.getDescription(), "description");
+    }
+
+    @PatchMapping("/{id}/status")
+    public Task updateStatus(
+        @PathVariable Long id, @Valid @RequestBody UpdateStatusTaskRequest dto
+    ) {
+        return service.updateTaskTextField(id, dto.getStatus(), "status");
     }
 }

@@ -47,21 +47,9 @@ public class TaskService {
             .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
-    /*
-    public ResponseEntity<Task> updateOrCreate(
-        Long id, UpdateFullTaskRequest dto
-    ) {
-        if (repo.findById(id).equals(Optional.empty())) {
-            return new ResponseEntity<>(
-                createTask(dto.getTitle(), dto.getDescription()),
-                HttpStatus.CREATED
-            );
-        } else {
-            return new ResponseEntity<>(
-                updateTaskFull(id, dto),
-                HttpStatus.OK
-            );
-        }
+    public Task updateTaskTextField(Long id, String text, String fieldName) {
+        return repo
+            .updateText(id, text, fieldName)
+            .orElseThrow(() -> new TaskNotFoundException(id));
     }
-    */
 }
