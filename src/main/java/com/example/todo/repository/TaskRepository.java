@@ -63,34 +63,22 @@ public class TaskRepository {
 
     @Transactional
     public Optional<Task> updateFull(Long id, UpdateFullTaskRequest dto) {
-        jdbc.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                "UPDATE tasks SET title = ?, description = ?, status = ? WHERE id = ?",
-                new String[]{"id"}
-            );
-            ps.setString(1, dto.getTitle());
-            ps.setString(2, dto.getDescription());
-            ps.setString(3, dto.getStatus());
-            ps.setLong(4, id);
-            return ps;
-        });
+        jdbc.update(
+            "UPDATE tasks SET title = ?, description = ?, status = ? WHERE id = ?",
+            dto.getTitle(), dto.getDescription(), dto.getStatus(), id
+        );
         return findById(id);
     }
 
     @Transactional
     public Optional<Task> updateText(Long id, String text, String fieldName) {
         String query = "UPDATE tasks SET " + fieldName + " = ? WHERE id = ?";
-        jdbc.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(
-                query,
-                new String[]{"id"}
-            );
-            ps.setString(1, text);
-            ps.setLong(2, id);
-            return ps;
-        });
+        jdbc.update(query, text, id);
         return findById(id);
     }
 
-    // other CRUD methods
+    @Transactional
+    public void deleteTask(Long id) {
+        jdbc.update("DELETE FROM tasks WHERE id = ?", id);
+    }
 }

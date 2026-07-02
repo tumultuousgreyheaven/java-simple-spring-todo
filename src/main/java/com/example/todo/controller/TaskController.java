@@ -3,6 +3,7 @@ package com.example.todo.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,5 +81,11 @@ public class TaskController {
         @PathVariable Long id, @Valid @RequestBody UpdateStatusTaskRequest dto
     ) {
         return service.updateTaskTextField(id, dto.getStatus(), "status");
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable Long id) {
+        service.deleteTask(id);
     }
 }

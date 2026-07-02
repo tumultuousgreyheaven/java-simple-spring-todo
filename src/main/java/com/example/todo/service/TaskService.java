@@ -52,4 +52,8 @@ public class TaskService {
             .updateText(id, text, fieldName)
             .orElseThrow(() -> new TaskNotFoundException(id));
     }
+
+    public void deleteTask(Long id) {
+        repo.deleteTask(id);
+    }
 }
