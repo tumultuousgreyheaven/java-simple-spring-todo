@@ -36,6 +36,18 @@ public class Task {
         this.status = dto.getStatus();
         this.createdAt = null;
     }
+
+    public Task(
+        Long id,
+        String title, String description, String status,
+        Instant createdAt
+    ) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
     
     public Long getId() {
         return this.id;

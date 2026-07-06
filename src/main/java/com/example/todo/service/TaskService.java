@@ -29,9 +29,6 @@ public class TaskService {
     }
 
     public Task createTask(String title, String description) {
-        if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("Title is required");
-        }
         Task task = new Task();
         task.setTitle(title);
         task.setDescription(description);
