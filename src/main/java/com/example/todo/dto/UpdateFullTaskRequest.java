@@ -15,6 +15,12 @@ public class UpdateFullTaskRequest {
     @NotBlank(message = "Status is required")
     @Pattern(regexp = "TODO|IN_PROGRESS|DONE", message = "Status must be one of: TODO, IN_PROGRESS, DONE")
     private String status;
+
+    public UpdateFullTaskRequest(String title, String description, String status) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
     
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
