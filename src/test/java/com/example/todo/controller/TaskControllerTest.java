@@ -1,21 +1,26 @@
 package com.example.todo.controller;
 
+import com.example.todo.dto.CreateTaskRequest;
+import com.example.todo.dto.UpdateDescriptionTaskRequest;
+import com.example.todo.dto.UpdateFullTaskRequest;
+import com.example.todo.dto.UpdateStatusTaskRequest;
+import com.example.todo.dto.UpdateTitleTaskRequest;
 import com.example.todo.exception.TaskNotFoundException;
 import com.example.todo.model.Task;
 import com.example.todo.service.TaskService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.client.RestTestClient;
+
 import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TaskController.class)
@@ -23,6 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TaskControllerTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private RestTestClient restTestClient;
 
     @MockitoBean
     private TaskService taskService;
@@ -90,25 +98,68 @@ public class TaskControllerTest {
 
     //--------------- create ---------------
 
+    @Test
+    void shouldReturn201AndCreatedTaskWhenCreated() throws Exception {
+        CreateTaskRequest dto = new CreateTaskRequest();
+        dto.setTitle("test1");
+        dto.setDescription("test description");
 
+        when(taskService.createTask("test1", "test description"))
+            .thenReturn(new Task(dto));
+
+        restTestClient
+            .post().uri("/tasks").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isCreated()
+            .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.title").isEqualTo("test1")
+            .jsonPath("$.description").isEqualTo("test description");
+    }
 
     //--------------- updateFull ---------------
 
+    void shouldReturn200AndUpdatedTaskWhenFullUpdated() throws Exception {
+        
+    }
 
+    void shouldReturn404WhenNoTaskToUpdateFull() throws Exception {
+
+    }
 
     //--------------- updateTitle ---------------
 
+    void shouldReturn200AndUpdatedTaskWhenTitleUpdated() throws Exception {
+        
+    }
 
+    void shouldReturn404WhenNoTaskToUpdateTitle() throws Exception {
+        
+    }
     
     //--------------- updateDescription ---------------
 
-    
+    void shouldReturn200AndUpdatedTaskWhenDescriptionUpdated() throws Exception {
+        
+    }
+
+    void shouldReturn404WhenNoTaskToUpdateDescription() throws Exception {
+        
+    }
     
     //--------------- updateStatus ---------------
 
+    void shouldReturn200AndUpdatedTaskWhenStatusUpdated() throws Exception {
+        
+    }
 
+    void shouldReturn404WhenNoTaskToUpdateStatus() throws Exception {
+        
+    }
 
     //--------------- deleteTask ---------------
 
-
+    void shouldReturn204WhenDeleted() throws Exception {
+        
+    }
 }

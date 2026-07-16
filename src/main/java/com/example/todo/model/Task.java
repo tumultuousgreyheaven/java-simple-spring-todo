@@ -2,6 +2,7 @@ package com.example.todo.model;
 
 import java.time.Instant;
 
+import com.example.todo.dto.CreateTaskRequest;
 import com.example.todo.dto.UpdateFullTaskRequest;
 
 import jakarta.validation.constraints.Min;
@@ -47,6 +48,11 @@ public class Task {
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
+    }
+
+    public Task(CreateTaskRequest dto) {
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
     }
     
     public Long getId() {
