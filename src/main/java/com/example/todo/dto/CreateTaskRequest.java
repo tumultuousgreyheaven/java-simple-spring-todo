@@ -12,6 +12,13 @@ public class CreateTaskRequest {
     @Size(max = 500, message = "Description size must be at most 500 characters")
     private String description;
 
+    public CreateTaskRequest() {}
+    
+    public CreateTaskRequest(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getDescription() { return description; }

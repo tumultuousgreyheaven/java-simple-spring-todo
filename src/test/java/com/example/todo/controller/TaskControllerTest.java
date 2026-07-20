@@ -1,10 +1,6 @@
 package com.example.todo.controller;
 
-import com.example.todo.dto.CreateTaskRequest;
-import com.example.todo.dto.UpdateDescriptionTaskRequest;
-import com.example.todo.dto.UpdateFullTaskRequest;
-import com.example.todo.dto.UpdateStatusTaskRequest;
-import com.example.todo.dto.UpdateTitleTaskRequest;
+import com.example.todo.dto.*;
 import com.example.todo.exception.TaskNotFoundException;
 import com.example.todo.model.Task;
 import com.example.todo.service.TaskService;
@@ -120,46 +116,151 @@ public class TaskControllerTest {
     //--------------- updateFull ---------------
 
     void shouldReturn200AndUpdatedTaskWhenFullUpdated() throws Exception {
+        UpdateFullTaskRequest dto = new UpdateFullTaskRequest(
+            "title update", "desc update", "IN_PROGRESS"
+        );
+        Task task = new Task(7L, dto);
+
+        when(taskService.updateTaskFull(7L, dto))
+            .thenReturn(task);
         
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(7L)
+            .jsonPath("$.title").isEqualTo("title update")
+            .jsonPath("$.description").isEqualTo("desc update")
+            .jsonPath("$.status").isEqualTo("IN_PROGRESS");
     }
 
     void shouldReturn404WhenNoTaskToUpdateFull() throws Exception {
-
+        UpdateFullTaskRequest dto = new UpdateFullTaskRequest(
+            "title update", "desc update", "IN_PROGRESS"
+        );
+        
+        when(taskService.updateTaskFull(7L, dto))
+            .thenThrow(new TaskNotFoundException(7L));
+        
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isNotFound();
     }
 
     //--------------- updateTitle ---------------
 
     void shouldReturn200AndUpdatedTaskWhenTitleUpdated() throws Exception {
+        UpdateTitleTaskRequest dto = new UpdateTitleTaskRequest(
+            "title update"
+        );
+        Task task = new Task(7L, dto);
+
+        when(taskService.updateTaskTextField(7L, dto.getTitle(), "title"))
+            .thenReturn(task);
         
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(7L)
+            .jsonPath("$.title").isEqualTo("title update");
     }
 
     void shouldReturn404WhenNoTaskToUpdateTitle() throws Exception {
+        UpdateTitleTaskRequest dto = new UpdateTitleTaskRequest(
+            "title update"
+        );
+
+        when(taskService.updateTaskTextField(7L, dto.getTitle(), "title"))
+            .thenThrow(new TaskNotFoundException(7L));
         
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isNotFound();
     }
     
     //--------------- updateDescription ---------------
 
     void shouldReturn200AndUpdatedTaskWhenDescriptionUpdated() throws Exception {
+        UpdateDescriptionTaskRequest dto = new UpdateDescriptionTaskRequest(
+            "title desc"
+        );
+        Task task = new Task(7L, dto);
+
+        when(taskService.updateTaskTextField(7L, dto.getDescription(), "description"))
+            .thenReturn(task);
         
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(7L)
+            .jsonPath("$.description").isEqualTo("desc update");
     }
 
     void shouldReturn404WhenNoTaskToUpdateDescription() throws Exception {
+        UpdateDescriptionTaskRequest dto = new UpdateDescriptionTaskRequest(
+            "title desc"
+        );
+
+        when(taskService.updateTaskTextField(7L, dto.getDescription(), "description"))
+            .thenThrow(new TaskNotFoundException(7L));
         
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isNotFound();
     }
     
     //--------------- updateStatus ---------------
 
     void shouldReturn200AndUpdatedTaskWhenStatusUpdated() throws Exception {
+        UpdateStatusTaskRequest dto = new UpdateStatusTaskRequest(
+            "IN_PROGRESS"
+        );
+        Task task = new Task(7L, dto);
+
+        when(taskService.updateTaskTextField(7L, dto.getStatus(), "status"))
+            .thenReturn(task);
         
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(7L)
+            .jsonPath("$.status").isEqualTo("IN_PROGRESS");
     }
 
     void shouldReturn404WhenNoTaskToUpdateStatus() throws Exception {
+        UpdateStatusTaskRequest dto = new UpdateStatusTaskRequest(
+            "IN_PROGRESS"
+        );
+
+        when(taskService.updateTaskTextField(7L, dto.getStatus(), "status"))
+            .thenThrow(new TaskNotFoundException(7L));
         
+        restTestClient
+            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .exchange()
+            .expectStatus().isNotFound();
     }
 
     //--------------- deleteTask ---------------
 
     void shouldReturn204WhenDeleted() throws Exception {
-        
+        restTestClient
+            .delete().uri("/tasks/7")
+            .exchange()
+            .expectStatus().isNoContent();
     }
 }

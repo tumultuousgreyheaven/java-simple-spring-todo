@@ -2,8 +2,7 @@ package com.example.todo.model;
 
 import java.time.Instant;
 
-import com.example.todo.dto.CreateTaskRequest;
-import com.example.todo.dto.UpdateFullTaskRequest;
+import com.example.todo.dto.*;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -30,14 +29,6 @@ public class Task {
 
     public Task() {}
 
-    public Task(Long id, UpdateFullTaskRequest dto) {
-        this.id = id;
-        this.title = dto.getTitle();
-        this.description = dto.getDescription();
-        this.status = dto.getStatus();
-        this.createdAt = null;
-    }
-
     public Task(
         Long id,
         String title, String description, String status,
@@ -50,9 +41,55 @@ public class Task {
         this.createdAt = createdAt;
     }
 
+    public Task(Long id, CreateTaskRequest dto) {
+        this.id = id;
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+    }
+    
+    public Task(Long id, UpdateDescriptionTaskRequest dto) {
+        this.id = id;
+        this.description = dto.getDescription();
+    }
+    
+    public Task(Long id, UpdateFullTaskRequest dto) {
+        this.id = id;
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+        this.status = dto.getStatus();
+    }
+
+    public Task(Long id, UpdateStatusTaskRequest dto) {
+        this.id = id;
+        this.status = dto.getStatus();
+    }
+
+    public Task(Long id, UpdateTitleTaskRequest dto) {
+        this.id = id;
+        this.title = dto.getTitle();
+    }
+
     public Task(CreateTaskRequest dto) {
         this.title = dto.getTitle();
         this.description = dto.getDescription();
+    }
+
+    public Task(UpdateDescriptionTaskRequest dto) {
+        this.description = dto.getDescription();
+    }
+
+    public Task(UpdateFullTaskRequest dto) {
+        this.title = dto.getTitle();
+        this.description = dto.getDescription();
+        this.status = dto.getStatus();
+    }
+
+    public Task(UpdateStatusTaskRequest dto) {
+        this.status = dto.getStatus();
+    }
+
+    public Task(UpdateTitleTaskRequest dto) {
+        this.title = dto.getTitle();
     }
     
     public Long getId() {
