@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -96,9 +98,9 @@ public class TaskControllerTest {
 
     @Test
     void shouldReturn201AndCreatedTaskWhenCreated() throws Exception {
-        CreateTaskRequest dto = new CreateTaskRequest();
-        dto.setTitle("test1");
-        dto.setDescription("test description");
+        CreateTaskRequest dto = new CreateTaskRequest(
+            "test1", "test description"
+        );
 
         when(taskService.createTask("test1", "test description"))
             .thenReturn(new Task(dto));
@@ -115,13 +117,17 @@ public class TaskControllerTest {
 
     //--------------- updateFull ---------------
 
+    @Test
     void shouldReturn200AndUpdatedTaskWhenFullUpdated() throws Exception {
         UpdateFullTaskRequest dto = new UpdateFullTaskRequest(
             "title update", "desc update", "IN_PROGRESS"
         );
         Task task = new Task(7L, dto);
 
-        when(taskService.updateTaskFull(7L, dto))
+        // any(UpdateFullTaskRequest.class) is necessary as test fails
+        // dto is a reference and Spring expects taskService.updateTaskFull(...)
+        // to be called with this concrete reference
+        when(taskService.updateTaskFull(any(Long.class), any(UpdateFullTaskRequest.class)))
             .thenReturn(task);
         
         restTestClient
@@ -136,12 +142,13 @@ public class TaskControllerTest {
             .jsonPath("$.status").isEqualTo("IN_PROGRESS");
     }
 
+    @Test
     void shouldReturn404WhenNoTaskToUpdateFull() throws Exception {
         UpdateFullTaskRequest dto = new UpdateFullTaskRequest(
             "title update", "desc update", "IN_PROGRESS"
         );
         
-        when(taskService.updateTaskFull(7L, dto))
+        when(taskService.updateTaskFull(any(Long.class), any(UpdateFullTaskRequest.class)))
             .thenThrow(new TaskNotFoundException(7L));
         
         restTestClient
@@ -152,6 +159,7 @@ public class TaskControllerTest {
 
     //--------------- updateTitle ---------------
 
+    @Test
     void shouldReturn200AndUpdatedTaskWhenTitleUpdated() throws Exception {
         UpdateTitleTaskRequest dto = new UpdateTitleTaskRequest(
             "title update"
@@ -162,7 +170,7 @@ public class TaskControllerTest {
             .thenReturn(task);
         
         restTestClient
-            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .patch().uri("/tasks/7/title").contentType(MediaType.APPLICATION_JSON).body(dto)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
@@ -171,6 +179,7 @@ public class TaskControllerTest {
             .jsonPath("$.title").isEqualTo("title update");
     }
 
+    @Test
     void shouldReturn404WhenNoTaskToUpdateTitle() throws Exception {
         UpdateTitleTaskRequest dto = new UpdateTitleTaskRequest(
             "title update"
@@ -180,16 +189,17 @@ public class TaskControllerTest {
             .thenThrow(new TaskNotFoundException(7L));
         
         restTestClient
-            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .patch().uri("/tasks/7/title").contentType(MediaType.APPLICATION_JSON).body(dto)
             .exchange()
             .expectStatus().isNotFound();
     }
     
     //--------------- updateDescription ---------------
 
+    @Test
     void shouldReturn200AndUpdatedTaskWhenDescriptionUpdated() throws Exception {
         UpdateDescriptionTaskRequest dto = new UpdateDescriptionTaskRequest(
-            "title desc"
+            "desc update"
         );
         Task task = new Task(7L, dto);
 
@@ -197,7 +207,7 @@ public class TaskControllerTest {
             .thenReturn(task);
         
         restTestClient
-            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .patch().uri("/tasks/7/description").contentType(MediaType.APPLICATION_JSON).body(dto)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
@@ -206,6 +216,7 @@ public class TaskControllerTest {
             .jsonPath("$.description").isEqualTo("desc update");
     }
 
+    @Test
     void shouldReturn404WhenNoTaskToUpdateDescription() throws Exception {
         UpdateDescriptionTaskRequest dto = new UpdateDescriptionTaskRequest(
             "title desc"
@@ -215,13 +226,14 @@ public class TaskControllerTest {
             .thenThrow(new TaskNotFoundException(7L));
         
         restTestClient
-            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .patch().uri("/tasks/7/description").contentType(MediaType.APPLICATION_JSON).body(dto)
             .exchange()
             .expectStatus().isNotFound();
     }
     
     //--------------- updateStatus ---------------
 
+    @Test
     void shouldReturn200AndUpdatedTaskWhenStatusUpdated() throws Exception {
         UpdateStatusTaskRequest dto = new UpdateStatusTaskRequest(
             "IN_PROGRESS"
@@ -232,7 +244,7 @@ public class TaskControllerTest {
             .thenReturn(task);
         
         restTestClient
-            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .patch().uri("/tasks/7/status").contentType(MediaType.APPLICATION_JSON).body(dto)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
@@ -241,6 +253,7 @@ public class TaskControllerTest {
             .jsonPath("$.status").isEqualTo("IN_PROGRESS");
     }
 
+    @Test
     void shouldReturn404WhenNoTaskToUpdateStatus() throws Exception {
         UpdateStatusTaskRequest dto = new UpdateStatusTaskRequest(
             "IN_PROGRESS"
@@ -250,13 +263,14 @@ public class TaskControllerTest {
             .thenThrow(new TaskNotFoundException(7L));
         
         restTestClient
-            .put().uri("/tasks/7").contentType(MediaType.APPLICATION_JSON).body(dto)
+            .patch().uri("/tasks/7/status").contentType(MediaType.APPLICATION_JSON).body(dto)
             .exchange()
             .expectStatus().isNotFound();
     }
 
     //--------------- deleteTask ---------------
 
+    @Test
     void shouldReturn204WhenDeleted() throws Exception {
         restTestClient
             .delete().uri("/tasks/7")

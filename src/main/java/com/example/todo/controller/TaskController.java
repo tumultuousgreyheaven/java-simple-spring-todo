@@ -66,6 +66,7 @@ public class TaskController {
     public Task updateTitle(
         @PathVariable Long id, @Valid @RequestBody UpdateTitleTaskRequest dto
     ) {
+        // dto transfer into service - coupling of REST and business logic
         return service.updateTaskTextField(id, dto.getTitle(), "title");
     }
 
